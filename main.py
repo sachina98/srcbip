@@ -1,6 +1,6 @@
 import pyrogram
 from pyrogram import Client, filters
-from pyrogram.errors import UserAlreadyParticipant, InviteHashExpired, UsernameNotOccupied
+from pyrogram.errors import UserAlreadyParticipant, InviteHashExpired, UsernameNotOccupied, MessageEmpty
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import time
@@ -110,7 +110,14 @@ def save(client: pyrogram.client.Client, message: pyrogram.types.messages_and_me
 					bot.send_message(message.chat.id,f"**String Session is not Set**", reply_to_message_id=message.id)
 					return
 				
+			try:
 				handle_private(message,chatid,msgid)
+			except MessageEmpty as e:
+				bot.send_message(message.chat.id,f"**Caught a message empty exception** : __{e}__", reply_to_message_id=message.id)
+				continue
+			except pyrogram.errors.exceptions.TelegramError as e:
+				bot.send_message(message.chat.id,f"**Caught a TelegramErrorException** : __{e}__", reply_to_message_id=message.id)
+				continue
 				# try: handle_private(message,chatid,msgid)
 				# except Exception as e: bot.send_message(message.chat.id,f"**Error** : __{e}__", reply_to_message_id=message.id)
 			
